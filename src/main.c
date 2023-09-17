@@ -13,7 +13,7 @@ LCDBitmap* meter_container_bmp;
 LCDSprite* tattoo_gun_sprite;
 LCDSprite* stencil_sprite;
 LCDSprite* meter_container_sprite;
-LCDSprite* accelerometer_debug_sprite;
+LCDSprite* meter_value_sprite;
 
 PDButtons buttons_pressed;
 PDButtons buttons_held;
@@ -24,11 +24,8 @@ float delta_time = 0.0f;
 
 float accelerometer_x, accelerometer_y, accelerometer_z;
 
-void accelerometer_debug_sprite_draw(LCDSprite* sprite, PDRect bounds, PDRect drawrect) {
-  char str[60]; //create an empty string to store number
-  sprintf(str, "%f", accelerometer_x);//make the number into string using sprintf function
-  pd->graphics->clearClipRect();
-  pd->graphics->drawText(str, 10, kUTF8Encoding, 50, 210);
+void meter_value_sprite_draw(LCDSprite* sprite, PDRect bounds, PDRect drawrect) {
+  pd->graphics->fillRect(drawrect.x, drawrect.y, 70, 25, kColorBlack);
 }
 
 void init_sprites(void) {
@@ -39,24 +36,28 @@ void init_sprites(void) {
 
   stencil_sprite = pd->sprite->newSprite();
   pd->sprite->setImage(stencil_sprite, stencil_bmp, kBitmapUnflipped);
-  pd->sprite->moveTo(stencil_sprite, LCD_COLUMNS/2, LCD_ROWS/2);
+  pd->sprite->moveTo(stencil_sprite, LCD_COLUMNS/2.0f, LCD_ROWS/2.0f);
   pd->sprite->addSprite(stencil_sprite);
+  pd->sprite->setCollisionsEnabled(stencil_sprite, 0);
 
   tattoo_gun_sprite = pd->sprite->newSprite();
   pd->sprite->setImage(tattoo_gun_sprite, tattoo_gun_bmp, kBitmapUnflipped);
-  pd->sprite->moveTo(tattoo_gun_sprite, LCD_COLUMNS/2, LCD_ROWS/2);
+  pd->sprite->moveTo(tattoo_gun_sprite, LCD_COLUMNS/2.0f, LCD_ROWS/2.0f);
   pd->sprite->addSprite(tattoo_gun_sprite);
+  pd->sprite->setCollisionsEnabled(tattoo_gun_sprite, 0);
 
   meter_container_sprite = pd->sprite->newSprite();
   pd->sprite->setImage(meter_container_sprite, meter_container_bmp, kBitmapUnflipped);
-  pd->sprite->moveTo(meter_container_sprite, LCD_COLUMNS/2, 30);
+  pd->sprite->moveTo(meter_container_sprite, LCD_COLUMNS/2.0f, 30);
   pd->sprite->addSprite(meter_container_sprite);
+  pd->sprite->setCollisionsEnabled(meter_container_sprite, 0);
 
-  accelerometer_debug_sprite = pd->sprite->newSprite();
-  pd->sprite->moveTo(accelerometer_debug_sprite, LCD_COLUMNS/2, LCD_ROWS/2);
-  pd->sprite->setSize(accelerometer_debug_sprite, LCD_COLUMNS, LCD_ROWS);
-  pd->sprite->setDrawFunction(accelerometer_debug_sprite, accelerometer_debug_sprite_draw);
-  pd->sprite->addSprite(accelerometer_debug_sprite);
+  meter_value_sprite = pd->sprite->newSprite();
+  pd->sprite->moveTo(meter_value_sprite, LCD_COLUMNS/2.0f, 30);
+  pd->sprite->setSize(meter_value_sprite, 150, 25);
+  pd->sprite->setDrawFunction(meter_value_sprite, meter_value_sprite_draw);
+  pd->sprite->addSprite(meter_value_sprite);
+  pd->sprite->setCollisionsEnabled(meter_value_sprite, 0);
 }
 
 int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg) {
@@ -121,6 +122,7 @@ static int update(void* userdata) {
   update_delta_time();
   pd->system->getButtonState(&buttons_pressed, &buttons_held, &buttons_released);
   update_accelerometer();
+  pd->sprite->markDirty(meter_value_sprite);
   update_tattoo_gun();
   pd->sprite->updateAndDrawSprites();
   pd->system->drawFPS(0, 0);
