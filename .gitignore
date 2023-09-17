@@ -3,6 +3,7 @@
 *.lst
 Extension/.dep/*.o.d
 *.pdx
+*.pdx.zip
 *.dylib.dSYM
 *.dylib
 *.bin
@@ -10,5 +11,6 @@ Extension/.dep/*.o.d
 *.hex
 *.map
 build/
+build_device/
 .cache/
 compile_commands.json
