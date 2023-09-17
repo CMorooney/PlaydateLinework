@@ -25,11 +25,11 @@ float delta_time = 0.0f;
 float accelerometer_x, accelerometer_y, accelerometer_z;
 
 void meter_value_sprite_draw(LCDSprite* sprite, PDRect bounds, PDRect drawrect) {
-  float width = fabsf(accelerometer_x) * 30;
+  float width = fabsf(accelerometer_x) + fabsf(accelerometer_y) + fabsf(accelerometer_z) * 60;
   float x = 0;
-  if(accelerometer_x > 0) { // left
+  if(accelerometer_x < 0) {
     x = (LCD_COLUMNS/2.0f) - width;
-  } else if (accelerometer_x < 0) {
+  } else if (accelerometer_x > 0) {
     x = (LCD_COLUMNS/2.0f);
   }
   pd->graphics->fillRect(x, drawrect.y, width, 25, kColorBlack);
