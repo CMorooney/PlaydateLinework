@@ -25,7 +25,14 @@ float delta_time = 0.0f;
 float accelerometer_x, accelerometer_y, accelerometer_z;
 
 void meter_value_sprite_draw(LCDSprite* sprite, PDRect bounds, PDRect drawrect) {
-  pd->graphics->fillRect(drawrect.x, drawrect.y, 70, 25, kColorBlack);
+  float width = fabsf(accelerometer_x) * 30;
+  float x = 0;
+  if(accelerometer_x > 0) { // left
+    x = (LCD_COLUMNS/2.0f) - width;
+  } else if (accelerometer_x < 0) {
+    x = (LCD_COLUMNS/2.0f);
+  }
+  pd->graphics->fillRect(x, drawrect.y, width, 25, kColorBlack);
 }
 
 void init_sprites(void) {
